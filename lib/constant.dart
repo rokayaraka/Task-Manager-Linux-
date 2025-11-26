@@ -13,3 +13,10 @@ final performance = Padding(
   ),
   ),
 );
+
+
+final List<Color> gradientColor= [
+
+  Color(0xFF23B6E6),
+  Color(0xFF02D39A),
+];
