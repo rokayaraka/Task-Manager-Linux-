@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/provider.dart';
 import 'package:task_manager/widgets/visualCpu.dart';
+import 'package:task_manager/widgets/visualMemory.dart';
+import 'package:task_manager/widgets/visualNetwork.dart';
 
 class Visualization extends ConsumerStatefulWidget {
   const Visualization({super.key});
@@ -51,20 +53,48 @@ class _VisualizationState extends ConsumerState<Visualization> {
             children: [
               option == "CPU"
                   ? Text("Utilization")
-                  : option == "MEMORY"
+                  : option == "Memory"
                   ? Text("Memory Usage")
                   : Text("Throughput"),
                   Spacer(),
               option == "CPU"
                   ? Text("100%")
-                  : option == "MEMORY"
-                  ? Text("10 GB")
-                  : Text("100 kbps"),
+                  : option == "Memory"
+                  ? Consumer(builder: (context,ref,child){
+                    final streams=ref.watch(memoryBuilder);
+                    return streams.when(
+                      data: (data){
+                        return Text("${data["total"]} GB");
+                      }, 
+                    error: (error, stack)=>Text("ERror"), 
+                    loading: ()=>Text(""),
+                    );
+                  })
+                  : Consumer(builder: (context,ref,child){
+                    final streams=ref.watch(networkBuilder);
+                    return streams.when(
+                      data: (data){
+                        double max=data["max"]!;
+                        String unit = "Kbps";
+                        if(max>=1000){
+                          max=max/1000;
+                          unit="Mbps";
+                        }
+                        return Text("$max $unit");
+                      }, 
+                    error: (error, stack)=>Text("ERror"), 
+                    loading: ()=>Text(""),
+                    );
+                  }),
             ],
 
 
           ),
-          Visualcpu(showGrid: true),
+          option=="CPU"? 
+          Visualcpu(showGrid: true)
+          :option=="Network"?
+          visualNetwork(showGrid: true)
+          :VisualMemory(showGrid: true),
            Row(
             children: [
               Text("0 sec"),
@@ -108,7 +138,29 @@ class _VisualizationState extends ConsumerState<Visualization> {
                 error: (error,stack)=>Text("error"), 
                 loading: ()=>SizedBox.shrink(),
                 );
-            }):SizedBox.shrink(),
+            }):option=="Network"?Consumer(builder: (Context,ref,child){
+              final streams=ref.watch(networkBuilder);
+              return streams.when(
+                data: (data){
+                  return Text(
+                    "Send            :  ${data["up"]} Kbps\n\nReceive       :  ${data["down"]} Kbps"
+                  );
+                }, 
+              error: (error,stack)=>Text("error"), 
+              loading: ()=>SizedBox.shrink(),
+              );
+            }):Consumer(builder: (context,ref,child){
+                    final streams=ref.watch(memoryBuilder);
+                    return streams.when(
+                      data: (data){
+                        return Text(
+                          "Total Memory${" "*20}: ${data["total"]} GB \n\nIn Use${" "*35}: ${data["used"]} GB \n\nAvailable${" "*29}: ${data["available"]} GB \n\nCache Memory${" "*18}: ${data["cache"]} GB"
+                        );
+                      }, 
+                    error: (error, stack)=>Text("ERror"), 
+                    loading: ()=>Text(""),
+                    );
+                  }),
               ],
             ),
           ),
