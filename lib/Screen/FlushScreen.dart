@@ -25,13 +25,19 @@ class _FlushscreenState extends ConsumerState<Flushscreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: flushBg,
-      body: Center(
-        child: CircleAvatar(
-          radius: 150,
-          backgroundColor: logoBg,
-          child: Image.asset("assets/icons.png",
-          scale: 1,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColor,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: CircleAvatar(
+            radius: 150,
+            backgroundColor: logoBg,
+            child: Image.asset("assets/icons.png", scale: 1),
           ),
         ),
       ),
