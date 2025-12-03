@@ -23,7 +23,6 @@ await for(var line in result.stdout.transform(SystemEncoding().decoder)){
 
 void assignValueonDiskInfoList(String value , String value1){
 try{
-  double max = 100;
   List<String> subList = value.split("\n");
   for(var line in subList){
     if(line.contains("sda")){

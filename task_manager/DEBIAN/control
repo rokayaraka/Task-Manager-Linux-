@@ -1,0 +1,8 @@
+Package: taskmanager
+Version: 1.0.0
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libgtk-3-0,libayatana-appindicator3-1,ifstat,sysstat
+Maintainer: rokaya sultana raka <rokayaraka251@gmail.com>
+Description: flutter linux application
