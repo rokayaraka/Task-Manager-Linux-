@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/provider.dart';
+import 'package:task_manager/providers/cpuProvider.dart';
+import 'package:task_manager/providers/diskProvider.dart';
+import 'package:task_manager/providers/memoryProvider.dart';
+import 'package:task_manager/providers/networkProvider.dart';
+import 'package:task_manager/visualDisk.dart';
 import 'package:task_manager/widgets/visualCpu.dart';
 import 'package:task_manager/widgets/visualMemory.dart';
 import 'package:task_manager/widgets/visualNetwork.dart';
@@ -55,7 +60,9 @@ class _VisualizationState extends ConsumerState<Visualization> {
                   ? Text("Utilization")
                   : option == "Memory"
                   ? Text("Memory Usage")
-                  : Text("Throughput"),
+                  : option=="Disk"
+                  ?Text("Disk Transfer Rate")
+                  :Text("Throughput"),
                   Spacer(),
               option == "CPU"
                   ? Text("100%")
@@ -70,7 +77,18 @@ class _VisualizationState extends ConsumerState<Visualization> {
                     loading: ()=>Text(""),
                     );
                   })
-                  : Consumer(builder: (context,ref,child){
+                  : option=="Disk"
+                  ?Consumer(builder: (context,ref,child){
+                    final streams=ref.watch(diskBuilder);
+                    return streams.when(
+                      data: (data){
+                        return Text("${data["max"]} Kbps");
+                      }, 
+                    error: (error, stack)=>Text("ERror"), 
+                    loading: ()=>Text(""),
+                    );
+                  })
+                  :Consumer(builder: (context,ref,child){
                     final streams=ref.watch(networkBuilder);
                     return streams.when(
                       data: (data){
@@ -94,7 +112,10 @@ class _VisualizationState extends ConsumerState<Visualization> {
           Visualcpu(showGrid: true)
           :option=="Network"?
           visualNetwork(showGrid: true)
-          :VisualMemory(showGrid: true),
+          :option=="Disk"?
+          VisualDisk(showGrid: true)
+          :
+          VisualMemory(showGrid: true),
            Row(
             children: [
               Text("0 sec"),
@@ -149,7 +170,20 @@ class _VisualizationState extends ConsumerState<Visualization> {
               error: (error,stack)=>Text("error"), 
               loading: ()=>SizedBox.shrink(),
               );
-            }):Consumer(builder: (context,ref,child){
+            }):option=="Disk"
+            ?Consumer(builder: (context,ref,child){
+              final streams=ref.watch(diskBuilder);
+              return streams.when(
+                data: (data){
+                  return Text(
+                    "Read Speed${" "*20}:  ${data["read"]} Kbps\n\nWrite Speed${" "*19}:  ${data["write"]} Kbps\n\nSize${" "*35}:  ${data["size"]} GB\n\nUsed${" "*33}:  ${data["used"]} GB\n\nFree${" "*34}:  ${data["avail"]} GB"
+                  );
+                }, 
+              error: (error,stack)=>Text("error"), 
+              loading: ()=>SizedBox.shrink(),
+              );
+            })
+            :Consumer(builder: (context,ref,child){
                     final streams=ref.watch(memoryBuilder);
                     return streams.when(
                       data: (data){

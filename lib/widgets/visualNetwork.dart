@@ -2,7 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/constant.dart';
-import 'package:task_manager/provider.dart';
+// import 'package:task_manager/provider.dart';
+import 'package:task_manager/providers/networkProvider.dart';
 
 class visualNetwork extends ConsumerStatefulWidget {
   const visualNetwork({super.key, required this.showGrid});
@@ -29,7 +30,7 @@ class _visualNetworkState extends ConsumerState<visualNetwork> {
 
           return streams.when(
             data: (data) {
-              if (spots.length >= 60) {
+              if (spots.length >= 63) {
                 spots.removeAt(0);
               }
               if (data.containsKey("throughput")) {
@@ -44,6 +45,7 @@ class _visualNetworkState extends ConsumerState<visualNetwork> {
               }
               return LineChart(
                 LineChartData(
+                  clipData: FlClipData.all(),
                   titlesData: FlTitlesData(show: false),
                   lineTouchData: LineTouchData(enabled: false),
                   maxX: xMax,

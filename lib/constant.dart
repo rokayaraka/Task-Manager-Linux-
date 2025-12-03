@@ -17,3 +17,4 @@ final performance = Padding(
 );
 
 final List<Color> gradientColor = [Color(0xFF23B6E6), Color(0xFF02D39A)];
+final List<Color> gradientColor1 = [Color.fromARGB(255, 183, 59, 187), Color.fromARGB(255, 153, 11, 209)];

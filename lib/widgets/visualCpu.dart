@@ -2,7 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager/constant.dart';
-import 'package:task_manager/provider.dart';
+//import 'package:task_manager/provider.dart';
+import 'package:task_manager/providers/cpuProvider.dart';
 
 class Visualcpu extends ConsumerStatefulWidget {
 
@@ -29,7 +30,7 @@ class _VisualcpuState extends ConsumerState<Visualcpu> {
           final streams = ref.watch(cpuBuilder);
           return streams.when(
             data: (data) {
-              if(spots.length>=60){
+              if(spots.length>=63){
                 spots.removeAt(0);
               }
 
@@ -45,6 +46,7 @@ class _VisualcpuState extends ConsumerState<Visualcpu> {
               }
               return LineChart(
                 LineChartData(
+                  clipData: FlClipData.all(),
                   maxX: xMax,
                   minX: xMin,
                   maxY: 100,
